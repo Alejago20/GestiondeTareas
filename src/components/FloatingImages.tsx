@@ -39,7 +39,7 @@ export const FloatingImages = () => {
   // Pre-cálculo de posiciones y opacidades iniciales
   const items = [
     ...images.map((img, i) => ({ ...img, baseTop: 46, initialOpacity: 0.3, idx: i, z: 0 })),
-    ...images1.map((img, i) => ({ ...img, baseTop: 40, initialOpacity: 0.5, idx: i + images.length, z: 1 }))
+    ...images1.map((img, i) => ({ ...img, baseTop: 50, initialOpacity: 0.5, idx: i + images.length, z: 1 }))
   ].map(item => {
     const localIdx = item.idx < images.length ? item.idx : item.idx - images.length;
     const group = item.idx < images.length ? images : images1;
@@ -61,40 +61,45 @@ export const FloatingImages = () => {
 
   // Ciclo automático al montarse
   useEffect(() => {
-    let isActive = true;
-    (async () => {
-      while (isActive) {
-        for (let i = 0; i < total; i++) {
-          // Mover al centro y fade-out
-          await controls.start((customIdx) => {
-            if (customIdx !== i) return {};
-            return {
-              top: "50%",
-              left: "50%",
-              opacity: 0,
-              zIndex: 2,
-              transition: { duration: fadeDuration, ease: "easeInOut" }
-            };
-          });
-          // Pausa en el centro
-          await new Promise(res => setTimeout(res, pauseDuration * 1000));
-          // Regresar a posición original y fade-in
-          await controls.start((customIdx) => {
-            if (customIdx !== i) return {};
-            const item = items.find(it => it.idx === customIdx)!;
-            return {
-              top: item.posY,
-              left: item.posX,
-              opacity: item.initialOpacity,
-              zIndex: item.z,
-              transition: { duration: fadeDuration, ease: "easeInOut" }
-            };
-          });
-        }
+  let isActive = true;
+  (async () => {
+    while (isActive) {
+      for (let i = 0; i < total; i += 6) {
+        const grupos = items.slice(i, i + 6);
+
+        // Fade-out al centro
+        await controls.start((customIdx) => {
+          if (!grupos.some(g => g.idx === customIdx)) return {};
+          return {
+            top: "50%",
+            left: "50%",
+            opacity: 0,
+            zIndex: 2,
+            transition: { duration: fadeDuration, ease: "easeInOut" }
+          };
+        });
+
+        await new Promise(res => setTimeout(res, pauseDuration * 1000));
+
+        // Volver a posición original
+        await controls.start((customIdx) => {
+          if (!grupos.some(g => g.idx === customIdx)) return {};
+          const item = items.find(it => it.idx === customIdx)!;
+          return {
+            top: item.posY,
+            left: item.posX,
+            opacity: item.initialOpacity,
+            zIndex: item.z,
+            transition: { duration: fadeDuration, ease: "easeInOut" }
+          };
+        });
       }
-    })();
-    return () => { isActive = false; };
-  }, [controls, items, total, fadeDuration, pauseDuration]);
+    }
+  })();
+
+  return () => { isActive = false; };
+}, [controls, items, total, fadeDuration, pauseDuration]);
+
 
   return (
     <motion.div
