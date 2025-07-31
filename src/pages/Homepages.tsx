@@ -1,4 +1,5 @@
-import { FloatingImages } from "../components/FloatingImages";
+
+import { FloatingImages } from "../components/FloatingImages"
 
 const Homepages = () => {
   return (
