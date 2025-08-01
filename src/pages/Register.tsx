@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+
 export default function Register() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
@@ -10,75 +11,98 @@ export default function Register() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log({ name, email, password });
-    // Aquí iría la lógica de creación de usuario
-    navigate("/login"); // Redirigir al login tras registro
+    navigate("/login");
   };
 
   return (
-    <div className="min-h-screen bg-black text-white grid grid-cols-1 md:grid-cols-2">
-      {/* Lado visual */}
-      <div className="hidden md:flex items-center justify-center relative">
-        <img
-          src="/decor/planets.png"
-          alt="decoración"
-          className="w-2/3 object-contain animate-pulse"
-        />
+    <div className="relative min-h-screen bg-black text-white overflow-hidden">
+
+      {/* Logo */}
+      <div className="absolute top-6 left-8 z-30">
+        <h1 className="text-white text-xl font-semibold tracking-wide cursor-pointer" onClick={() => navigate("/")}>
+           COSMODEX<span className="text-sm align-super">©</span>
+        </h1>
       </div>
 
-      {/* Formulario de registro */}
-      <div className="flex items-center justify-center px-6 py-12">
-        <form
-          onSubmit={handleSubmit}
-          className="w-full max-w-sm space-y-6"
-        >
-          <div className="text-center space-y-2">
-            <div className="text-xl">Crear cuenta</div>
-            <div className="text-sm text-gray-400">
-              <span
-                onClick={() => navigate("/login")}
-                className="underline cursor-pointer hover:text-white"
-              >
-                ya tengo cuenta
-              </span>
+      {/* Card de registro */}
+      <div className="relative z-20 flex items-center justify-center min-h-screen px-4">
+        <div className="w-full max-w-md bg-white/5 backdrop-blur-sm p-10 rounded-3xl shadow-lg border border-white/10">
+          <div className="text-center mb-8">
+             <div className="relative w-10 h-10 animate-spin-slow flex items-center left-40">
+              {[...Array(8)].map((_, i) => {
+                const angle = (i * 360) / 6;
+                const x = 16 + 12 * Math.cos((angle * Math.PI) / 180);
+                const y = 16 + 12 * Math.sin((angle * Math.PI) / 180);
+                return (
+                  <div
+                    key={i}
+                    className="absolute w-2 h-2 bg-white rounded-full left-50"
+                    style={{
+                      left: `${x}px`,
+                      top: `${y}px`,
+                    }}
+                  />
+                );
+              })}
             </div>
+            <div className="text-2xl font-serif">
+              
+          Welcome to  Cosmodex
+              
+            </div>
+            <p className="text-gray-400 text-sm">Begin by creating an account</p>
           </div>
 
-          <div className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <input
               type="text"
-              placeholder="Nombre completo"
+              placeholder="Full name"
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-5 py-3 bg-zinc-800 text-white rounded-full placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
+              className="w-full px-5 py-3 bg-zinc-900 text-white rounded-full placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/30"
             />
-
             <input
               type="email"
-              placeholder="Correo electrónico"
+              placeholder="Email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-5 py-3 bg-zinc-800 text-white rounded-full placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
+              className="w-full px-5 py-3 bg-zinc-900 text-white rounded-full placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/30"
             />
-
             <input
               type="password"
-              placeholder="Contraseña"
+              placeholder="Password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-5 py-3 bg-zinc-800 text-white rounded-full placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
+              className="w-full px-5 py-3 bg-zinc-900 text-white rounded-full placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/30"
             />
+
+            <button
+              type="submit"
+              className="w-full py-3 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition"
+            >
+              Sign up
+            </button>
+          </form>
+
+          <div className="text-center mt-4 text-sm text-gray-500">
+            By continuing, you agree to our{" "}
+            <span className="underline cursor-pointer hover:text-white">Terms</span> and{" "}
+            <span className="underline cursor-pointer hover:text-white">Privacy Policy</span>.
           </div>
 
-          <button
-            type="submit"
-            className="w-full py-3 bg-white text-black font-medium rounded-full hover:bg-gray-200 transition"
-          >
-            Registrarme
-          </button>
-        </form>
+          <div className="text-center mt-6 text-sm">
+            <span className="text-gray-400">Already have an account? </span>
+            <span
+              onClick={() => navigate("/login")}
+              className="underline cursor-pointer hover:text-white"
+            >
+              Log in
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   );

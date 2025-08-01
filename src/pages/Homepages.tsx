@@ -1,5 +1,6 @@
 
 import { FloatingImages } from "../components/FloatingImages"
+import Header from "../components/Header";
 
 const Homepages = () => {
   return (
@@ -16,6 +17,10 @@ const Homepages = () => {
         <p className="mt-4 text-4xl text-gray-300">
           Organiza tu universo de tareas
         </p>
+        <div>
+          <Header/>
+        </div>
+
       </div>
     </div>
   );
