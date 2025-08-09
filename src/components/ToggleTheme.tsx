@@ -5,13 +5,17 @@ const ToggleTheme = () => {
   return (
     <div
       onClick={() => openThema()}
-      className="flex flex-row justify-between gap-4 px-6 py-2 rounded-2xl border border-white/30 hover:border-white text-white cursor-pointer select-none"
+      className={`flex items-center gap-4 px-6 py-2 rounded-2xl cursor-pointer select-none 
+        ${isthema 
+          ? "bg-[#f2f2f2] border border-black/20 " 
+          : " bg-[#0c0c0c] border  border-white/20 hover:border-white"
+        }`}
     >
-      <div  className={`
-          ${!isthema ? " text-white" : " text-black"}
-        `}>Dark</div>
-      <div className={`
-          ${!isthema ? " text-white" : " text-black"}
+      <div  className={`px-1.9 py-1 
+          ${isthema ? "bg-transparent text-gray-400 hover:text-black " : "text-white"}`
+          }>Dark</div>
+      <div className={`px-1 py-1
+          ${!isthema ? "bg-transparent text-gray-400 hover:text-white" : " text-black"}
         `} >Light</div>
     </div>
   );

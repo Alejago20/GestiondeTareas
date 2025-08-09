@@ -13,7 +13,7 @@ const Homepages = () => {
       <FloatingImages />
       <div className="absolute top-0 left-0 right-0 bottom-0 flex flex-col z-10 items-center px-4 text-center justify-center">
         <h1
-          className={`"text-white text-9xl tracking-wider relative inline-block 
+          className={`"text-white text-9xl tracking-wider relative inline-block select-none
   ${isthema ? " text-black" : " text-white"}`}
         >
           COSMODEX
@@ -23,7 +23,7 @@ const Homepages = () => {
         </h1>
 
         <p
-          className={`"mt-4 text-4xl
+          className={`"mt-4 text-4xl select-none
   ${isthema ? " text-gray-700 " : " text-gray-300"}`}
         >
           Organiza tu universo de tareas
