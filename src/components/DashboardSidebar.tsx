@@ -1,8 +1,14 @@
-import { useNavigate } from "react-router-dom";
 import { useGlobalStore } from "../../theme/thema";
 
-export default function DashboardSidebar() {
-  const navigate = useNavigate();
+
+type Props = {
+  selected: string;
+  onSelect: (cat: string) => void;
+};
+
+const CATS = ["Todo", "Personal", "Trabajar", "Compartido"];
+
+export default function DashboardSidebar({ selected, onSelect }: Props) {
   const isthema = useGlobalStore((state) => state.isthema);
 
   return (
@@ -32,37 +38,36 @@ export default function DashboardSidebar() {
             </div>
       </div>
 
-      {/* Secciones */}
       <div className="space-y-2">
         <div className="text-sm text-gray-400 px-2">Secciones</div>
-        <button className="w-full text-left px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition">
+        <div className="w-full text-left px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white">
           Tareas
-        </button>
+        </div>
       </div>
 
-      {/* Categorías */}
       <div className="space-y-3">
         <div className="text-sm text-gray-400 px-2">Categorías</div>
-
-        <button className="w-full text-left px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white/90 hover:bg-white/10 transition">
-          Todo
-        </button>
-        <button className="w-full text-left px-4 py-3 rounded-xl hover:bg-white/5 text-white/80">
-          Personal
-        </button>
-        <button className="w-full text-left px-4 py-3 rounded-xl hover:bg-white/5 text-white/80">
-          Trabajar
-        </button>
-        <button className="w-full text-left px-4 py-3 rounded-xl hover:bg-white/5 text-white/80">
-          Compartido
-        </button>
+        {CATS.map((c) => {
+          const active = selected === c;
+          return (
+            <button
+              key={c}
+              onClick={() => onSelect(c)}
+              className={`w-full text-left px-4 py-3 rounded-xl transition ${
+                active
+                  ? "bg-white/10 text-white border border-white/15"
+                  : "hover:bg-white/5 text-white/80"
+              }`}
+            >
+              {c}
+            </button>
+          );
+        })}
       </div>
 
       <div className="mt-auto px-2">
         <div className="text-xs text-gray-400">Kevin Quiñones</div>
-        <div className="text-[11px] text-gray-500">
-          Hecho con ❤️ · <span className="underline cursor-pointer" onClick={() => navigate("/")}>Home</span>
-        </div>
+        <div className="text-[11px] text-gray-500">Hecho con ❤️</div>
       </div>
     </aside>
   );
