@@ -1,4 +1,5 @@
 import { useGlobalStore } from "../../theme/thema";
+import { useAuth } from "../context/AuthContext";
 
 
 type Props = {
@@ -10,6 +11,7 @@ const CATS = ["Todo", "Personal", "Trabajar", "Compartido"];
 
 export default function DashboardSidebar({ selected, onSelect }: Props) {
   const isthema = useGlobalStore((state) => state.isthema);
+  const { logout } = useAuth();
 
   return (
     <aside className="h-screen w-72 bg-black/60 border-r border-white/10 p-4 flex flex-col gap-6">
@@ -66,7 +68,14 @@ export default function DashboardSidebar({ selected, onSelect }: Props) {
       </div>
 
       <div className="mt-auto px-2">
-        <div className="text-xs text-gray-400">Kevin Quiñones</div>
+        <button
+          onClick={logout}
+          className="text-red-400 hover:text-red-300 transition"
+        >
+          Log out
+        </button>
+        <div className="text-xs text-gray-400">Desarrollado por:</div>
+        <div className="text-xs text-gray-400">Kevin Quiñones y Aleja Gomez </div>
         <div className="text-[11px] text-gray-500">Hecho con ❤️</div>
       </div>
     </aside>

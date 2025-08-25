@@ -1,6 +1,9 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import type { User, AuthResponse } from "../services/auth";
+import type { AuthResponse } from "../services/auth";
 import { loginSrv, registerSrv } from "../services/auth";
+
+
+type User = { id: string; name: string; email: string; createdAt?: string };
 
 type AuthCtx = {
   user: User | null;

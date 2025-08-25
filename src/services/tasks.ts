@@ -11,18 +11,27 @@ export type Task = {
   updatedAt: string;
 };
 
-export async function listTasks(params?: { q?: string; category?: string }) {
-  const { data } = await api.get<Task[]>("/tasks", { params });
-  return data.map(t => ({ ...t, id: t._id ?? t.id })); // por si llega _id
+const norm = (t: Task) => ({ ...t, id: t._id ?? t.id });
+
+export async function listTasksSrv(): Promise<Task[]> {
+  const { data } = await api.get<Task[]>("/tasks");
+  return data.map(norm);
 }
-export async function createTask(payload: { title: string; category: Task["category"]; dueDate?: string }) {
+
+export async function createTaskSrv(payload: { 
+  title: string; 
+  category: string 
+}): Promise<Task> {
   const { data } = await api.post<Task>("/tasks", payload);
-  return { ...data, id: data._id ?? data.id };
+  return norm(data);
 }
-export async function updateTask(id: string, patch: Partial<Pick<Task, "title"|"category"|"done"|"dueDate">>) {
-  const { data } = await api.patch<Task>(`/tasks/${id}`, patch);
-  return { ...data, id: data._id ?? data.id };
+
+export async function updateTaskSrv(id: string, payload: Partial<Pick<Task, "title" | "category" | "done">>): Promise<Task> {
+  const { data } = await api.patch<Task>(`/tasks/${id}`, payload);
+  return norm(data);
 }
-export async function deleteTask(id: string) {
-  await api.delete(`/tasks/${id}`);
+
+export async function deleteTaskSrv(id: string): Promise<{ ok: true }> {
+  const { data } = await api.delete<{ ok: true }>(`/tasks/${id}`);
+  return data;
 }

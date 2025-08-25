@@ -1,3 +1,5 @@
+import { useAuth } from "../context/AuthContext";
+
 type Props = {
   onNewTask: () => void;
   query: string;
@@ -16,9 +18,12 @@ function formatFechaES(d = new Date()) {
 }
 
 export default function DashboardTopbar({ onNewTask, query, onQueryChange }: Props) {
+  const { user } = useAuth();
+  const firstName = user?.name?.split(" ")[0] ?? "Usuario";
+
   return (
     <div className="px-6 pt-8">
-      <h1 className="text-2xl md:text-3xl font-semibold text-white">Buenas tardes, Kevin 👋</h1>
+      <h1 className="text-2xl md:text-3xl font-semibold text-white">Buenas tardes, {firstName} 👋</h1>
       <p className="text-sm text-gray-400">{formatFechaES()}</p>
 
       <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-4 flex items-center justify-between">
