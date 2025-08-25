@@ -3,15 +3,14 @@ import Homepages from "../pages/Homepages";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Dashboard from "../pages/Dashboard";
+import RequireAuth from "../components/RequireAuth";
 
 
 export const router = createBrowserRouter([
     {
         path:"/",
-        element: <Homepages/>
-
-    }
-    ,
+        element: <Homepages />
+    },
     {
         path: "/login",
         element: <Login />
@@ -21,8 +20,13 @@ export const router = createBrowserRouter([
         element: <Register />
     },
     {
-        path: "/dashboard",
-        element: <Dashboard />
-    }
-])
+        element: <RequireAuth />,
+        children: [
+            {
+                path: "/dashboard",
+                element: <Dashboard />
+            }
+        ],
+    },
+]);
 

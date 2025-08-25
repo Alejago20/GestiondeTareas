@@ -1,17 +1,31 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FloatingStones } from "../components/FloatingStones";
+import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
+  const { login } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    console.log({ email, password });
-    navigate("/dashboard");
-  };
+    setLoading(true); setError(null);
+    try {
+      await login(email, password);
+      navigate("/dashboard");
+    } catch (err: unknown) {
+      if (typeof err === "object" && err !== null && "response" in err) {
+        const errorObj = err as { response?: { data?: { error?: string } } };
+        setError(errorObj.response?.data?.error ?? "Error al iniciar sesión");
+      } else {
+        setError("Error al iniciar sesión");
+      }
+    } finally { setLoading(false); }
+  }
 
   return (
     <div className="relative min-h-screen bg-black text-white grid grid-cols-1 md:grid-cols-2 overflow-hidden">
@@ -93,10 +107,18 @@ export default function Login() {
           {/* Botón */}
           <button
             type="submit"
+            disabled={loading}
             className="w-full py-3 bg-white text-black font-medium rounded-full hover:bg-gray-200 transition"
           >
-            Enter
+            {loading ? "Loading..." : "Enter"}
           </button>
+
+          {/* Error message */}
+          {error && (
+            <p className="text-sm text-red-500 text-center mt-2">
+              {error}
+            </p>
+          )}
 
           {/* Contraseña olvidada */}
           <p className="text-sm text-gray-500 text-center">
