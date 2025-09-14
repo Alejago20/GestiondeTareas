@@ -1,26 +1,52 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { useAuth } from "../hook/useContext";
+import { validateRegister } from "../lib/validations";
+import type { UserErrors } from "../context/types";
 
 export default function Register() {
+  const { signup, isAuthenticated, user,errors:registerError } = useAuth();
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState<UserErrors>({});
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log({ name, email, password });
-    navigate("/login");
-  };
+  useEffect(() => {
+    if (isAuthenticated) navigate("/login");
+  }, [isAuthenticated]);
+
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  // 1. Validar datos antes de hacer signup
+  const validationErrors = validateRegister(name, email, password);
+  setErrors(validationErrors);
+
+  // 2. Si hay errores, detenemos aquí
+  if (Object.keys(validationErrors).length > 0) {
+    return; 
+  }
+
+  // 3. Si no hay errores, sí hace el signup
+  try {
+    await signup(name, email, password);
+    console.log(user);
+  } catch (error) {
+    console.error("Error registrando usuario:", error);
+  }
+};
+
 
   return (
     <div className="relative min-h-screen bg-black text-white overflow-hidden">
-
       {/* Logo */}
       <div className="absolute top-6 left-8 z-30">
-        <h1 className="text-white text-xl font-semibold tracking-wide cursor-pointer" onClick={() => navigate("/")}>
-           COSMODEX<span className="text-sm align-super">©</span>
+        <h1
+          className="text-white text-xl font-semibold tracking-wide cursor-pointer"
+          onClick={() => navigate("/")}
+        >
+          COSMODEX<span className="text-sm align-super">©</span>
         </h1>
       </div>
 
@@ -28,7 +54,7 @@ export default function Register() {
       <div className="relative z-20 flex items-center justify-center min-h-screen px-4">
         <div className="w-full max-w-md bg-white/5 backdrop-blur-sm p-10 rounded-3xl shadow-lg border border-white/10">
           <div className="text-center mb-8">
-             <div className="relative w-10 h-10 animate-spin-slow flex items-center left-40">
+            <div className="relative w-10 h-10 animate-spin-slow flex items-center left-40">
               {[...Array(8)].map((_, i) => {
                 const angle = (i * 360) / 6;
                 const x = 16 + 12 * Math.cos((angle * Math.PI) / 180);
@@ -45,39 +71,62 @@ export default function Register() {
                 );
               })}
             </div>
-            <div className="text-2xl font-serif">
-              
-          Welcome to  Cosmodex
-              
-            </div>
-            <p className="text-gray-400 text-sm">Begin by creating an account</p>
+            <div className="text-2xl font-serif">Welcome to Cosmodex</div>
+            <p className="text-gray-400 text-sm">
+              Begin by creating an account
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <input
-              type="text"
-              placeholder="Full name"
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full px-5 py-3 bg-zinc-900 text-white rounded-full placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/30"
-            />
-            <input
-              type="email"
-              placeholder="Email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-5 py-3 bg-zinc-900 text-white rounded-full placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/30"
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-5 py-3 bg-zinc-900 text-white rounded-full placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/30"
-            />
+            {
+              registerError.map((error,i)=>(
+                <div className="bg-red-500 p-2" key={i}>
+                  {error}
+                </div>
+              ))
+            }
+            <div>
+              <input
+                type="text"
+                placeholder="Full name"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full px-5 py-3 bg-zinc-900 text-white rounded-full placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/30"
+              />
+
+              {errors.username && (
+                <p className="text-red-400 text-sm mt-1">{errors.username}</p>
+              )}
+            </div>
+
+            <div>
+              <input
+                type="email"
+                placeholder="Email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-5 py-3 bg-zinc-900 text-white rounded-full placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/30"
+              />
+              {errors.email && (
+                <p className="text-red-400 text-sm mt-1">{errors.email}</p>
+              )}
+            </div>
+
+            <div>
+              <input
+                type="password"
+                placeholder="Password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-5 py-3 bg-zinc-900 text-white rounded-full placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/30"
+              />
+              {errors.password && (
+                <p className="text-red-400 text-sm mt-1">{errors.password}</p>
+              )}
+            </div>
 
             <button
               type="submit"
@@ -89,8 +138,14 @@ export default function Register() {
 
           <div className="text-center mt-4 text-sm text-gray-500">
             By continuing, you agree to our{" "}
-            <span className="underline cursor-pointer hover:text-white">Terms</span> and{" "}
-            <span className="underline cursor-pointer hover:text-white">Privacy Policy</span>.
+            <span className="underline cursor-pointer hover:text-white">
+              Terms
+            </span>{" "}
+            and{" "}
+            <span className="underline cursor-pointer hover:text-white">
+              Privacy Policy
+            </span>
+            .
           </div>
 
           <div className="text-center mt-6 text-sm">
